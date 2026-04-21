@@ -2,14 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Pan\Contracts;
+namespace Denosys\Analytics\Contracts;
 
-use Pan\Enums\EventType;
-use Pan\ValueObjects\Analytic;
+use Denosys\Analytics\Enums\EventType;
+use Denosys\Analytics\ValueObjects\Analytic;
 
-/**
- * @internal
- */
 interface AnalyticsRepository
 {
     /**
@@ -20,9 +17,23 @@ interface AnalyticsRepository
     public function all(): array;
 
     /**
-     * Increments the given event for the given analytic.
+     * Increment a single event for the given analytic.
      */
     public function increment(string $name, EventType $event): void;
+
+    /**
+     * Increment a batch of events in aggregate.
+     *
+     * Implementations should collapse duplicates (same name + same event)
+     * into aggregated database writes and issue a bounded number of queries
+     * regardless of input size. This is the preferred entry point whenever a
+     * caller has more than one event to record in a single request cycle —
+     * the default `increment()` path calls this under the hood with a
+     * single-element array.
+     *
+     * @param  array<int, array{name: string, event: EventType}>  $increments
+     */
+    public function batchIncrement(array $increments): void;
 
     /**
      * Flush all analytics.

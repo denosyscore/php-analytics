@@ -2,26 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Pan\Adapters\Laravel\Repositories;
+namespace Denosys\Analytics\Adapters\Laravel\Repositories;
 
+use Denosys\Analytics\Contracts\AnalyticsRepository;
+use Denosys\Analytics\Enums\EventType;
+use Denosys\Analytics\PanConfiguration;
+use Denosys\Analytics\ValueObjects\Analytic;
 use Illuminate\Database\Connection;
 use Illuminate\Database\DatabaseManager;
-use Pan\Contracts\AnalyticsRepository;
-use Pan\Enums\EventType;
-use Pan\PanConfiguration;
-use Pan\ValueObjects\Analytic;
 
 /**
  * @internal
  */
 final readonly class DatabaseAnalyticsRepository implements AnalyticsRepository
 {
-    /**
-     * Creates a new analytics repository instance.
-     */
     public function __construct(
         private DatabaseManager $databaseManager,
-        private PanConfiguration $config
+        private PanConfiguration $config,
     ) {}
 
     /**
@@ -44,30 +41,101 @@ final readonly class DatabaseAnalyticsRepository implements AnalyticsRepository
     }
 
     /**
-     * Increments the given event for the given analytic.
+     * Increment a single event. Delegates to batchIncrement so the aggregated
+     * SQL path is the one-and-only write path — avoids drift between the
+     * single-event and multi-event implementations.
      */
     public function increment(string $name, EventType $event): void
     {
+        $this->batchIncrement([['name' => $name, 'event' => $event]]);
+    }
+
+    /**
+     * Increment a batch of events with a bounded number of queries:
+     *   - 1 SELECT to find existing rows
+     *   - 1 UPDATE per unique existing name (N+1 against *unique names*, which
+     *     is tiny in practice, not against the event batch size)
+     *   - 1 COUNT for the max_analytics cap check
+     *   - 1 bulk INSERT for new names
+     *
+     * @param  array<int, array{name: string, event: EventType}>  $increments
+     */
+    public function batchIncrement(array $increments): void
+    {
+        if ($increments === []) {
+            return;
+        }
+
         [
             'allowed_analytics' => $allowedAnalytics,
             'max_analytics' => $maxAnalytics,
         ] = $this->config->toArray();
 
-        if (count($allowedAnalytics) > 0 && ! in_array($name, $allowedAnalytics, true)) {
+        $hasAllowlist = count($allowedAnalytics) > 0;
+
+        /** @var array<string, array<string, int>> $buffer */
+        $buffer = [];
+        foreach ($increments as $increment) {
+            $name = $increment['name'];
+
+            if ($hasAllowlist && ! in_array($name, $allowedAnalytics, true)) {
+                continue;
+            }
+
+            $column = $increment['event']->column();
+            $buffer[$name][$column] = ($buffer[$name][$column] ?? 0) + 1;
+        }
+
+        if ($buffer === []) {
             return;
         }
 
         $connection = $this->connection();
 
-        if ($connection->table('pan_analytics')->where('name', $name)->count() === 0) {
-            if ($connection->table('pan_analytics')->count() < $maxAnalytics) {
-                $connection->table('pan_analytics')->insert(['name' => $name, $event->column() => 1]);
+        $names = array_keys($buffer);
+        $existingRows = $connection->table('pan_analytics')
+            ->whereIn('name', $names)
+            ->pluck('name')
+            ->all();
+
+        $existingSet = [];
+        foreach ($existingRows as $existingName) {
+            if (is_string($existingName)) {
+                $existingSet[$existingName] = true;
+            }
+        }
+
+        $rowsToInsert = [];
+
+        foreach ($buffer as $name => $columns) {
+            if (isset($existingSet[$name])) {
+                $connection->table('pan_analytics')
+                    ->where('name', $name)
+                    ->incrementEach($columns);
+
+                continue;
             }
 
+            $rowsToInsert[] = array_merge(
+                ['name' => $name, 'impressions' => 0, 'hovers' => 0, 'clicks' => 0],
+                $columns,
+            );
+        }
+
+        if ($rowsToInsert === []) {
             return;
         }
 
-        $connection->table('pan_analytics')->where('name', $name)->increment($event->column());
+        $currentCount = $connection->table('pan_analytics')->count();
+        $remainingCapacity = max(0, $maxAnalytics - $currentCount);
+
+        if ($remainingCapacity === 0) {
+            return;
+        }
+
+        $connection->table('pan_analytics')->insert(
+            array_slice($rowsToInsert, 0, $remainingCapacity),
+        );
     }
 
     /**
@@ -79,18 +147,18 @@ final readonly class DatabaseAnalyticsRepository implements AnalyticsRepository
     }
 
     /**
-     * Resolve the database connection.
-     */
-    private function connection(): Connection
-    {
-        return $this->databaseManager->connection($this->config->getDatabaseConnection());
-    }
-
-    /**
      * Delete a specific analytic by ID.
      */
     public function delete(int $id): int
     {
         return $this->connection()->table('pan_analytics')->where('id', $id)->delete();
+    }
+
+    /**
+     * Resolve the database connection.
+     */
+    private function connection(): Connection
+    {
+        return $this->databaseManager->connection($this->config->getDatabaseConnection());
     }
 }

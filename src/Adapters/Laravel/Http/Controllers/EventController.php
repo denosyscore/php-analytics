@@ -2,13 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Pan\Adapters\Laravel\Http\Controllers;
+namespace Denosys\Analytics\Adapters\Laravel\Http\Controllers;
 
+use Denosys\Analytics\Actions\CreateEvent;
+use Denosys\Analytics\Adapters\Laravel\Http\Requests\CreateEventRequest;
 use Illuminate\Http\Response;
-use Illuminate\Support\Collection;
-use Pan\Actions\CreateEvent;
-use Pan\Adapters\Laravel\Http\Requests\CreateEventRequest;
-use Pan\Enums\EventType;
 
 /**
  * @internal
@@ -16,14 +14,16 @@ use Pan\Enums\EventType;
 final readonly class EventController
 {
     /**
-     * Store a new event.
+     * Store a new event batch. Delegates to CreateEvent::handleBatch so the
+     * aggregated SQL path is the one used regardless of how many events the
+     * client submits in the request.
      */
     public function store(CreateEventRequest $request, CreateEvent $action): Response
     {
-        /** @var Collection<int, array{name: string, type: string}> $events */
-        $events = $request->collect('events');
+        /** @var array<int, array{name: string, type: string}> $events */
+        $events = $request->collect('events')->all();
 
-        $events->each(fn (array $event) => $action->handle($event['name'], EventType::from($event['type'])));
+        $action->handleBatch($events);
 
         return response()->noContent();
     }
