@@ -33,17 +33,40 @@ final readonly class InjectJavascriptLibrary
         /** @var Response $response */
         $response = $next($request);
 
-        if (strtolower($response->headers->get('Content-Type') ?? '') === 'text/html; charset=utf-8') {
-            $content = (string) $response->getContent();
-
-            if (! str_contains($content, '</html>') || ! str_contains($content, '</body>')) {
-                return $response;
-            }
-
-            $this->inject($response);
+        if (! $this->isHtmlResponse($response->headers->get('Content-Type'))) {
+            return $response;
         }
 
+        $content = (string) $response->getContent();
+
+        if (! str_contains($content, '</html>') || ! str_contains($content, '</body>')) {
+            return $response;
+        }
+
+        $this->inject($response);
+
         return $response;
+    }
+
+    /**
+     * Decide whether the given Content-Type value indicates an HTML response.
+     *
+     * Matches case-insensitively and only looks at the media type — the charset
+     * or other parameters (boundary, profile, etc.) vary across frameworks and
+     * proxies and should not prevent injection. Previously this required an
+     * exact "text/html; charset=utf-8" string, which silently skipped perfectly
+     * valid HTML responses such as "text/html", "text/html;charset=UTF-8"
+     * (no space), or "Text/HTML; charset=utf-8" (capitalised).
+     */
+    private function isHtmlResponse(?string $contentType): bool
+    {
+        if ($contentType === null || $contentType === '') {
+            return false;
+        }
+
+        $mediaType = trim(strtolower(explode(';', $contentType, 2)[0]));
+
+        return $mediaType === 'text/html';
     }
 
     /**
