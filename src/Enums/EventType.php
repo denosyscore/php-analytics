@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Pan\Enums;
+namespace Denosys\Analytics\Enums;
 
 /**
  * @internal

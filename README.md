@@ -98,7 +98,7 @@ By default, Pan tracks all the HTML elements with the `data-pan` attribute, so b
 For extra protection, you may use the `PanConfiguration::allowedAnalytics` method to whitelist the analytics you want to track. This way, only the analytics you've whitelisted will be stored in your database.
 
 ```php
-use Pan\PanConfiguration;
+use Denosys\Analytics\PanConfiguration;
 
 public function register(): void
 {

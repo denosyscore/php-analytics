@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Pan\Adapters\Laravel\Console\Commands;
+namespace Denosys\Analytics\Adapters\Laravel\Console\Commands;
 
+use Denosys\Analytics\Contracts\AnalyticsRepository;
 use Illuminate\Console\Command;
-use Pan\Contracts\AnalyticsRepository;
 
 /**
  * @internal

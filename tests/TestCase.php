@@ -2,10 +2,10 @@
 
 namespace Tests;
 
+use Denosys\Analytics\Adapters\Laravel\Providers\PanServiceProvider;
 use Illuminate\Support\ServiceProvider;
 use Orchestra\Testbench\Attributes\WithMigration;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use Pan\Adapters\Laravel\Providers\PanServiceProvider;
 
 use function Orchestra\Testbench\workbench_path;
 

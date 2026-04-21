@@ -1,7 +1,7 @@
 <?php
 
+use Denosys\Analytics\PanConfiguration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Pan\PanConfiguration;
 use Tests\TestCase;
 
 pest()

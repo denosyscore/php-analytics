@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Pan\Adapters\Laravel\Http\Middleware;
+namespace Denosys\Analytics\Adapters\Laravel\Http\Middleware;
 
 use Closure;
+use Denosys\Analytics\PanConfiguration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
-use Pan\PanConfiguration;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

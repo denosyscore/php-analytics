@@ -1,7 +1,7 @@
 <?php
 
-use Pan\Contracts\AnalyticsRepository;
-use Pan\Enums\EventType;
+use Denosys\Analytics\Contracts\AnalyticsRepository;
+use Denosys\Analytics\Enums\EventType;
 
 it('may run even if there is no analytics', function (): void {
     $response = $this->artisan('pan:flush');

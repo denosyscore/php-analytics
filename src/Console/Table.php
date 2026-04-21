@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Pan\Console;
+namespace Denosys\Analytics\Console;
 
 use Symfony\Component\Console\Helper\Table as BaseTable;
 use Symfony\Component\Console\Output\OutputInterface;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Pan;
+namespace Denosys\Analytics;
 
 final class PanConfiguration
 {

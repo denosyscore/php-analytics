@@ -1,8 +1,7 @@
 {
-    "name": "panphp/pan",
-    "description": "A simple, lightweight, and privacy-focused product analytics php package.",
+    "name": "denosyscore/php-analytics",
+    "description": "A simple, lightweight, and privacy-focused product analytics php package. Fork of panphp/pan with a public repository contract and batched increments.",
     "keywords": [
-        "pan",
         "php",
         "analytics",
         "library",
@@ -11,12 +10,18 @@
     "license": "MIT",
     "authors": [
         {
+            "name": "Deon Okonkwo",
+            "email": "deondazy@gmail.com"
+        },
+        {
             "name": "Nuno Maduro",
-            "email": "enunomaduro@gmail.com"
+            "email": "enunomaduro@gmail.com",
+            "role": "Original author (panphp/pan)"
         },
         {
             "name": "David Hill",
-            "email": "david@laravel.com"
+            "email": "david@laravel.com",
+            "role": "Original author (panphp/pan)"
         }
     ],
     "require": {
@@ -36,7 +41,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Pan\\": "src/"
+            "Denosys\\Analytics\\": "src/"
         }
     },
     "autoload-dev": {
@@ -56,7 +61,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Pan\\Adapters\\Laravel\\Providers\\PanServiceProvider"
+                "Denosys\\Analytics\\Adapters\\Laravel\\Providers\\PanServiceProvider"
             ]
         }
     },

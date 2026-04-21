@@ -1,9 +1,9 @@
 <?php
 
-use Pan\Actions\CreateEvent;
-use Pan\Contracts\AnalyticsRepository;
-use Pan\Enums\EventType;
-use Pan\ValueObjects\Analytic;
+use Denosys\Analytics\Actions\CreateEvent;
+use Denosys\Analytics\Contracts\AnalyticsRepository;
+use Denosys\Analytics\Enums\EventType;
+use Denosys\Analytics\ValueObjects\Analytic;
 
 it('increments the click event for the given analytic', function (): void {
     $action = app(CreateEvent::class);

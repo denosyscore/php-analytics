@@ -1,7 +1,7 @@
 <?php
 
-use Pan\Contracts\AnalyticsRepository;
-use Pan\Enums\EventType;
+use Denosys\Analytics\Contracts\AnalyticsRepository;
+use Denosys\Analytics\Enums\EventType;
 use Symfony\Component\Console\Exception\RuntimeException;
 
 it('deletes a specific analytic by ID', function (): void {

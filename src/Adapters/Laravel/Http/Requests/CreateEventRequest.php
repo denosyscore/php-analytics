@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Pan\Adapters\Laravel\Http\Requests;
+namespace Denosys\Analytics\Adapters\Laravel\Http\Requests;
 
+use Denosys\Analytics\Enums\EventType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Pan\Enums\EventType;
 
 /**
  * @internal

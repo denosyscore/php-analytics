@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Pan\Adapters\Laravel\Console\Commands;
+namespace Denosys\Analytics\Adapters\Laravel\Console\Commands;
 
+use Denosys\Analytics\Console\Table;
+use Denosys\Analytics\Contracts\AnalyticsRepository;
+use Denosys\Analytics\Presentors\AnalyticPresentor;
+use Denosys\Analytics\ValueObjects\Analytic;
 use Illuminate\Console\Command;
-use Pan\Console\Table;
-use Pan\Contracts\AnalyticsRepository;
-use Pan\Presentors\AnalyticPresentor;
-use Pan\ValueObjects\Analytic;
 
 /**
  * @internal

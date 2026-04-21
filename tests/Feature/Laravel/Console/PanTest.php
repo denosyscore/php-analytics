@@ -1,8 +1,8 @@
 <?php
 
+use Denosys\Analytics\Contracts\AnalyticsRepository;
+use Denosys\Analytics\Enums\EventType;
 use Illuminate\Support\Facades\Artisan;
-use Pan\Contracts\AnalyticsRepository;
-use Pan\Enums\EventType;
 
 it('displays analytics even if they are empty', function (): void {
     $response = $this->artisan('pan');

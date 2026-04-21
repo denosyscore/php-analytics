@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Pan\Presentors;
+namespace Denosys\Analytics\Presentors;
 
-use Pan\ValueObjects\Analytic;
+use Denosys\Analytics\ValueObjects\Analytic;
 
 /**
  * @internal

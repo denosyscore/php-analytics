@@ -1,7 +1,7 @@
 <?php
 
-use Pan\Presentors\AnalyticPresentor;
-use Pan\ValueObjects\Analytic;
+use Denosys\Analytics\Presentors\AnalyticPresentor;
+use Denosys\Analytics\ValueObjects\Analytic;
 
 it('present an analytic', function (): void {
     $analytic = new Analytic(1, 'help-modal', 1, 1, 1);

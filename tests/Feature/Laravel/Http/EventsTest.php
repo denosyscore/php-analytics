@@ -1,9 +1,9 @@
 <?php
 
+use Denosys\Analytics\Contracts\AnalyticsRepository;
+use Denosys\Analytics\PanConfiguration;
+use Denosys\Analytics\ValueObjects\Analytic;
 use Illuminate\Support\Facades\DB;
-use Pan\Contracts\AnalyticsRepository;
-use Pan\PanConfiguration;
-use Pan\ValueObjects\Analytic;
 
 it('can create an analytic click event', function (): void {
     $response = $this->post('/pan/events', [

@@ -1,6 +1,6 @@
 <?php
 
-use Pan\PanConfiguration;
+use Denosys\Analytics\PanConfiguration;
 
 it('have a max of 50 analytics by default', function (): void {
     expect(PanConfiguration::instance()->toArray())->toBe([

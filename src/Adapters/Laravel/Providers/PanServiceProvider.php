@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Pan\Adapters\Laravel\Providers;
+namespace Denosys\Analytics\Adapters\Laravel\Providers;
 
+use Denosys\Analytics\Adapters\Laravel\Console\Commands\InstallPanCommand;
+use Denosys\Analytics\Adapters\Laravel\Console\Commands\PanCommand;
+use Denosys\Analytics\Adapters\Laravel\Console\Commands\PanDeleteCommand;
+use Denosys\Analytics\Adapters\Laravel\Console\Commands\PanFlushCommand;
+use Denosys\Analytics\Adapters\Laravel\Http\Controllers\EventController;
+use Denosys\Analytics\Adapters\Laravel\Http\Middleware\InjectJavascriptLibrary;
+use Denosys\Analytics\Adapters\Laravel\Repositories\DatabaseAnalyticsRepository;
+use Denosys\Analytics\Contracts\AnalyticsRepository;
+use Denosys\Analytics\PanConfiguration;
 use Illuminate\Contracts\Http\Kernel as HttpContract;
 use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Pan\Adapters\Laravel\Console\Commands\InstallPanCommand;
-use Pan\Adapters\Laravel\Console\Commands\PanCommand;
-use Pan\Adapters\Laravel\Console\Commands\PanDeleteCommand;
-use Pan\Adapters\Laravel\Console\Commands\PanFlushCommand;
-use Pan\Adapters\Laravel\Http\Controllers\EventController;
-use Pan\Adapters\Laravel\Http\Middleware\InjectJavascriptLibrary;
-use Pan\Adapters\Laravel\Repositories\DatabaseAnalyticsRepository;
-use Pan\Contracts\AnalyticsRepository;
-use Pan\PanConfiguration;
 
 /**
  * @internal
